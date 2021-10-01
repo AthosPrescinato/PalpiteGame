@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Palpite Game</string>
+    <string name="digite_um_palpite">Digite um palpite</string>
+    <string name="numero_palpitado">0</string>
+    <string name="button_enviar">Enviar</string>
+    <string name="button_novo_jogo">Novo Jogo</string>
+</resources>
