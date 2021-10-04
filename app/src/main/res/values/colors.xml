@@ -8,5 +8,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="red">#FF0000</color>
+    <color name="colorPrimary">#e91d63</color>
+    <color name="colorDark">#af174a</color>
+
+    <color name="background_led">#00FFFFFF</color>
+    <color name="led_off">#EAEAEA</color>
+    <color name="led_on">#e91d63</color>
 
 </resources>

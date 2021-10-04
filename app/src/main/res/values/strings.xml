@@ -4,4 +4,9 @@
     <string name="numero_palpitado">0</string>
     <string name="button_enviar">Enviar</string>
     <string name="button_novo_jogo">Nova Partida</string>
+    <string name="maior">É maior</string>
+    <string name="menor">É menor</string>
+    <string name="acertou">Acertou!!</string>
+    <string name="erro">Erro</string>
+
 </resources>

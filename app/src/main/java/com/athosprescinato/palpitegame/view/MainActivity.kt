@@ -1,13 +1,10 @@
 package com.athosprescinato.palpitegame.view
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.athosprescinato.palpitegame.R
 import com.athosprescinato.palpitegame.repository.ValorRepository
@@ -20,10 +17,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var viewModel: MainViewModel
     private var valorGerado: Int = 0
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        supportActionBar?.title = "Qual é o número?"
 
         setListeners()
 
@@ -36,18 +34,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             arriscarPalpite()
         }
     }
-     // Inicializa os eventos de clickl
+
+    // Inicializa os eventos de clickl
 
     private fun setListeners() {
         button_novo_jogo.setOnClickListener(this)
         button_enviar.setOnClickListener(this)
     }
 
-    fun novaPartida(){
+    private fun novaPartida() {
 
         // Reconfigura para o estado inicial dos TextViews
-        textView_numero_palpitado.setText("0")
-        textView_dica.setText("")
+        //imageView_numero_palpitado.setImageResource(R.drawable.ic_led_0)
+        textView_dica.text = ""
 
         // Recebe da API o valor gerado
         val repository = ValorRepository()
@@ -55,59 +54,103 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
         viewModel.getValor()
 
-        viewModel.myResponse.observe(this, Observer { response ->
+        viewModel.myResponse.observe(this, { response ->
             /* Verifica se o retorno da API foi um sucesso
                 caso seja sucesso, habilita o botão enviar e torna invisivel o botao de nova partida
                 caso tenha falhado, exibi a mensagem erro e mostra o número do erro
             * */
-            if(response.isSuccessful) {
+            if (response.isSuccessful) {
                 valorGerado = response.body()?.value!!
-                button_enviar.setEnabled(true)
+                button_enviar.isEnabled = true
                 button_novo_jogo.visibility = View.GONE
             } else {
-                textView_dica.setText("Error")
-                textView_numero_palpitado.setText(response.code().toString())
+                textView_dica.text = resources.getString(R.string.erro)
+                //imageView_numero_palpitado.text = response.code().toString()
             }
         })
     }
 
-    fun arriscarPalpite(){
+    private fun arriscarPalpite() {
 
         // Recebe a entrada do usuario e converte para String
-        val palpiteUsuario = editText_palpite_usuario.getText().toString()
+        val palpiteUsuario = editText_palpite_usuario.text.toString()
 
         // Exibe a entrada do usuario no painel de palpite
-        textView_numero_palpitado.setText(palpiteUsuario)
+        atualizarLed(palpiteUsuario)
 
 
         /*Converte a entrada do usuario para um inteiro e verifica se é um numero
            já faz as verificações entre a entrada do usuario e o valor gerado da API
            E retorna com as dicas ou se acertou.
         * */
-            try {
-                val palpiteInt = palpiteUsuario.toInt()
+        try {
+            val palpiteInt = palpiteUsuario.toInt()
 
-                 if (palpiteInt == valorGerado) {
-                    textView_dica.setText("Acertou!!")
-                     button_novo_jogo.visibility = View.VISIBLE
-                     button_enviar.setEnabled(false)
+            if (palpiteInt == valorGerado) {
+                textView_dica.text = resources.getString(R.string.acertou)
+                button_novo_jogo.visibility = View.VISIBLE
+                button_enviar.isEnabled = false
 
-                } else if (palpiteInt < valorGerado ){
-                     textView_dica.setText("É maior")
+            } else if (palpiteInt < valorGerado) {
+                textView_dica.text = resources.getString(R.string.maior)
 
-                 } else {
-                     textView_dica.setText("É menor")
+            } else {
+                textView_dica.text = resources.getString(R.string.menor)
 
-                 }
-
-            } catch (nfe: NumberFormatException) {
-                // Caso o valor de entrada não seja um valor valido, um Toast irá surgir avisando
-                Toast.makeText(this, "Entre apenas com números inteiros", Toast.LENGTH_SHORT).show()
             }
 
+        } catch (nfe: NumberFormatException) {
+            // Caso o valor de entrada não seja um valor valido, um Toast irá surgir avisando
+            Toast.makeText(this, "Entre apenas com números inteiros", Toast.LENGTH_SHORT).show()
+
+        }
+
         // A cada novo envio de palpite, o campo de entrada é limpo.
-        editText_palpite_usuario.getText()?.clear()
+        editText_palpite_usuario.text?.clear()
 
 
     }
+
+    private fun atualizarLed(palpite: String) {
+
+        val tamanhoPalpite = palpite.length
+
+        if (tamanhoPalpite == 1) {
+
+            imageView_DisplayLed_3_1.visibility = View.GONE
+            imageView_DisplayLed_3_2.visibility = View.GONE
+            imageView_DisplayLed_3_3.visibility = View.GONE
+
+            imageView_DisplayLed_2_1.visibility = View.GONE
+            imageView_DisplayLed_2_2.visibility = View.GONE
+
+            imageView_DisplayLed_1_1.visibility = View.VISIBLE
+
+        } else if (tamanhoPalpite == 2) {
+
+            imageView_DisplayLed_1_1.visibility = View.INVISIBLE
+
+            imageView_DisplayLed_3_1.visibility = View.GONE
+            imageView_DisplayLed_3_2.visibility = View.GONE
+            imageView_DisplayLed_3_3.visibility = View.GONE
+
+            imageView_DisplayLed_2_1.visibility = View.VISIBLE
+            imageView_DisplayLed_2_2.visibility = View.VISIBLE
+
+        } else if (tamanhoPalpite == 3){
+            imageView_DisplayLed_1_1.visibility = View.INVISIBLE
+
+            imageView_DisplayLed_2_1.visibility = View.GONE
+            imageView_DisplayLed_2_2.visibility = View.GONE
+
+            imageView_DisplayLed_3_1.visibility = View.VISIBLE
+            imageView_DisplayLed_3_2.visibility = View.VISIBLE
+            imageView_DisplayLed_3_3.visibility = View.VISIBLE
+
+        }
+
+
+    }
+
+
 }
