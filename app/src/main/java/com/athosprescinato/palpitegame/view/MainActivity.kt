@@ -44,9 +44,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun novaPartida() {
 
-        // Reconfigura para o estado inicial dos TextViews
-        //imageView_numero_palpitado.setImageResource(R.drawable.ic_led_0)
-        textView_dica.text = ""
+
 
         // Recebe da API o valor gerado
         val repository = ValorRepository()
@@ -60,12 +58,27 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 caso tenha falhado, exibi a mensagem erro e mostra o número do erro
             * */
             if (response.isSuccessful) {
+                // Reconfigura para o estado inicial
+                textView_dica.text = ""
+                imageView_DisplayLed_3_1.visibility = View.INVISIBLE
+                imageView_DisplayLed_3_2.visibility = View.INVISIBLE
+                imageView_DisplayLed_3_3.visibility = View.INVISIBLE
+
+                imageView_DisplayLed_2_1.visibility = View.INVISIBLE
+                imageView_DisplayLed_2_2.visibility = View.INVISIBLE
+
+                val resId =
+                    resources.getIdentifier("@drawable/ic_led_0", "drawable", packageName)
+                imageView_DisplayLed_1_1.setImageResource(resId)
+                imageView_DisplayLed_1_1.visibility = View.VISIBLE
+
+
                 valorGerado = response.body()?.value!!
                 button_enviar.isEnabled = true
-                button_novo_jogo.visibility = View.GONE
+                button_novo_jogo.visibility = View.INVISIBLE
             } else {
                 textView_dica.text = resources.getString(R.string.erro)
-                //imageView_numero_palpitado.text = response.code().toString()
+                atualizarLed(response.code().toString())
             }
         })
     }
@@ -115,42 +128,70 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         val tamanhoPalpite = palpite.length
 
-        if (tamanhoPalpite == 1) {
+        val strs = palpite.split("").toTypedArray()
 
-            imageView_DisplayLed_3_1.visibility = View.GONE
-            imageView_DisplayLed_3_2.visibility = View.GONE
-            imageView_DisplayLed_3_3.visibility = View.GONE
 
-            imageView_DisplayLed_2_1.visibility = View.GONE
-            imageView_DisplayLed_2_2.visibility = View.GONE
 
-            imageView_DisplayLed_1_1.visibility = View.VISIBLE
+        when (tamanhoPalpite ) {
 
-        } else if (tamanhoPalpite == 2) {
+            1 -> {
+                imageView_DisplayLed_3_1.visibility = View.INVISIBLE
+                imageView_DisplayLed_3_2.visibility = View.INVISIBLE
+                imageView_DisplayLed_3_3.visibility = View.INVISIBLE
 
-            imageView_DisplayLed_1_1.visibility = View.INVISIBLE
+                imageView_DisplayLed_2_1.visibility = View.INVISIBLE
+                imageView_DisplayLed_2_2.visibility = View.INVISIBLE
 
-            imageView_DisplayLed_3_1.visibility = View.GONE
-            imageView_DisplayLed_3_2.visibility = View.GONE
-            imageView_DisplayLed_3_3.visibility = View.GONE
+                val resId =
+                    resources.getIdentifier("@drawable/ic_led_" + strs[1], "drawable", packageName)
+                imageView_DisplayLed_1_1.setImageResource(resId)
+                imageView_DisplayLed_1_1.visibility = View.VISIBLE
 
-            imageView_DisplayLed_2_1.visibility = View.VISIBLE
-            imageView_DisplayLed_2_2.visibility = View.VISIBLE
+            }
+            2 -> {
 
-        } else if (tamanhoPalpite == 3){
-            imageView_DisplayLed_1_1.visibility = View.INVISIBLE
+                imageView_DisplayLed_1_1.visibility = View.INVISIBLE
 
-            imageView_DisplayLed_2_1.visibility = View.GONE
-            imageView_DisplayLed_2_2.visibility = View.GONE
+                imageView_DisplayLed_3_1.visibility = View.INVISIBLE
+                imageView_DisplayLed_3_2.visibility = View.INVISIBLE
+                imageView_DisplayLed_3_3.visibility = View.INVISIBLE
 
-            imageView_DisplayLed_3_1.visibility = View.VISIBLE
-            imageView_DisplayLed_3_2.visibility = View.VISIBLE
-            imageView_DisplayLed_3_3.visibility = View.VISIBLE
+                var resId =
+                    resources.getIdentifier("@drawable/ic_led_" + strs[1], "drawable", packageName)
+                imageView_DisplayLed_2_1.setImageResource(resId)
+
+                resId =
+                    resources.getIdentifier("@drawable/ic_led_" + strs[2], "drawable", packageName)
+                imageView_DisplayLed_2_2.setImageResource(resId)
+
+                imageView_DisplayLed_2_1.visibility = View.VISIBLE
+                imageView_DisplayLed_2_2.visibility = View.VISIBLE
+
+            }
+            3 -> {
+                imageView_DisplayLed_1_1.visibility = View.INVISIBLE
+
+                imageView_DisplayLed_2_1.visibility = View.INVISIBLE
+                imageView_DisplayLed_2_2.visibility = View.INVISIBLE
+
+                var resId =
+                    resources.getIdentifier("@drawable/ic_led_" + strs[1], "drawable", packageName)
+                imageView_DisplayLed_3_1.setImageResource(resId)
+
+                resId =
+                    resources.getIdentifier("@drawable/ic_led_" + strs[2], "drawable", packageName)
+                imageView_DisplayLed_3_2.setImageResource(resId)
+
+                resId =
+                    resources.getIdentifier("@drawable/ic_led_" + strs[3], "drawable", packageName)
+                imageView_DisplayLed_3_3.setImageResource(resId)
+
+                imageView_DisplayLed_3_1.visibility = View.VISIBLE
+                imageView_DisplayLed_3_2.visibility = View.VISIBLE
+                imageView_DisplayLed_3_3.visibility = View.VISIBLE
+
+            }
 
         }
-
-
     }
-
-
 }
