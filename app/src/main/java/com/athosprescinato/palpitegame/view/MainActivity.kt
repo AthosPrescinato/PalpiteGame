@@ -1,7 +1,6 @@
 package com.athosprescinato.palpitegame.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -21,12 +20,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Altera o titulo da toolBar
         supportActionBar?.title = "Qual é o número?"
 
+        //Chama a função para inicializar os eventos de click
         setListeners()
 
     }
-
+        // Eventos de click
     override fun onClick(v: View) {
         if (v.id == R.id.button_novo_jogo) {
             novaPartida()
@@ -35,16 +36,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    // Inicializa os eventos de clickl
 
+    // Inicializa os eventos de clickl
     private fun setListeners() {
         button_novo_jogo.setOnClickListener(this)
         button_enviar.setOnClickListener(this)
     }
 
+
     private fun novaPartida() {
-
-
 
         // Recebe da API o valor gerado
         val repository = ValorRepository()
@@ -72,11 +72,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 imageView_DisplayLed_1_1.setImageResource(resId)
                 imageView_DisplayLed_1_1.visibility = View.VISIBLE
 
-
+                //  Armazena o valor gerado pela API, e altera os status dos botões
                 valorGerado = response.body()?.value!!
                 button_enviar.isEnabled = true
                 button_novo_jogo.visibility = View.INVISIBLE
+
             } else {
+                // Exibe a mensagem de erro na tela
                 textView_dica.text = resources.getString(R.string.erro)
                 atualizarLed(response.code().toString())
             }
@@ -86,9 +88,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun arriscarPalpite() {
 
         // Recebe a entrada do usuario e converte para String
-        val palpiteUsuario = editText_palpite_usuario.text.toString()
+        var palpiteUsuario = editText_palpite_usuario.text.toString()
 
-        // Exibe a entrada do usuario no painel de palpite
+        //Trata a entrada do usuario, removendo zeros na frente
+        palpiteUsuario = palpiteUsuario.trimStart('0')
+
+        // Chama a função que trata e exibe a entrada do usuario no painel de led dos palpite
         atualizarLed(palpiteUsuario)
 
 
@@ -126,11 +131,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun atualizarLed(palpite: String) {
 
+        // Pega a quantidade de algarismos
         val tamanhoPalpite = palpite.length
 
+        //Quebra o palpite em algarismos
         val strs = palpite.split("").toTypedArray()
 
-
+        // Separa o tipo de tratamento dependendo do tamanho do algarismo.
+        // Alternando os imagesviews e trazendo o resource correto.
 
         when (tamanhoPalpite ) {
 
